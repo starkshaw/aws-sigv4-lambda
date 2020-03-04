@@ -11,25 +11,35 @@ supported_http_methods = ['GET', 'POST', 'PUT',
 
 def lambda_handler(event, context):
     logger.info('Event: {}'.format(json.dumps(event)))
-    if not 'Endpoint' in event or len(event['Endpoint']) == 0:
-        raise Exception('Endpoint parameter needs to be specified.')
-    else:
-        endpoint = event['Endpoint']
-    if not 'HTTPMethod' in event or len(event['HTTPMethod']) == 0:
-        raise Exception('HTTPMethod parameter cannot be empty.')
-    else:
-        http_method = event['HTTPMethod'].upper()
-    if not http_method in supported_http_methods:
-        raise Exception(
-            '"{}" is not a supported HTTP method.'.format(http_method))
-    if not 'Region' in event or len(event['Region']) == 0:
-        raise Exception('Region parameter needs to be specified.')
-    else:
-        region = event['Region']
-    if not 'Service' in event or len(event['Service']) == 0:
-        raise Exception('Service parameter needs to be specified.')
-    else:
-        service = event['Service']
+    try:
+        if not 'Endpoint' in event or len(event['Endpoint']) == 0:
+            raise Exception('\'Endpoint\' parameter cannot be empty.')
+        else:
+            endpoint = event['Endpoint']
+        if not 'HTTPMethod' in event or len(event['HTTPMethod']) == 0:
+            raise Exception('\'HTTPMethod\' parameter cannot be empty.')
+        else:
+            http_method = event['HTTPMethod'].upper()
+        if not http_method in supported_http_methods:
+            raise Exception(
+                '\'{}\' is not a supported HTTP method.'.format(http_method))
+        if not 'Region' in event or len(event['Region']) == 0:
+            raise Exception('\'Region\' parameter cannot be empty.')
+        else:
+            region = event['Region']
+        if not 'Service' in event or len(event['Service']) == 0:
+            raise Exception('\'Service\' parameter cannot be empty.')
+        else:
+            service = event['Service']
+    except Exception as e:
+        logger.error('Error: {}'.format(e))
+        error_msg = {
+            'message': str(e)
+        }
+        return {
+            'statusCode': 502,
+            'body': json.dumps(error_msg)
+        }
     auth = AWS4Auth(
         os.environ['AWS_ACCESS_KEY_ID'],
         os.environ['AWS_SECRET_ACCESS_KEY'],
@@ -132,5 +142,5 @@ def lambda_handler(event, context):
     else:
         return {
             'statusCode': 200,
-            'body': 'Invocation is successful but the response is empty.'
+            'body': 'The request is successfully sent but the response is empty.'
         }
