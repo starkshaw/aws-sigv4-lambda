@@ -3,7 +3,7 @@ An AWS Lambda function allows you to compose Signature Version 4 signed HTTP req
 
 ## External Dependencies
 
-- [`requests_aws4Auth`](https://github.com/sam-washington/requests-aws4auth/blob/master/requests_aws4auth/aws4auth.py)
+- [`requests_aws4Auth`](https://github.com/sam-washington/requests-aws4auth)
 
 ### How to install external dependencies?
 
